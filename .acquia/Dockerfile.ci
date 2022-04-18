@@ -1,0 +1,19 @@
+ARG BASE_IMAGE=golang:1.17-buster
+ARG REPO_LOCATION
+FROM ${REPO_LOCATION}${BASE_IMAGE}
+
+ENV TERRAFORM_VERSION=1.1.7
+
+# Installing dependencies
+RUN apt-get update && apt-get upgrade -y \
+ && apt-get install -y unzip software-properties-common xz-utils \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Installing Terraform
+RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
+    apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
+    apt-get update -y && \
+    apt-get install -y terraform=${TERRAFORM_VERSION}
+
+# Define work directory
+WORKDIR /bitnami-docker-apache-exporter

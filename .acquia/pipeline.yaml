@@ -1,0 +1,48 @@
+---
+type: default
+team: ngc
+service: fn-apache-exporter
+
+environment_image:
+  file: ".acquia/Dockerfile.ci"
+  context: "."
+
+pre_build:
+  security_composition_analysis:
+    required: false
+
+build:
+  service_image:
+      - name: 'fn-apache-exporter'
+        file: '0/debian-10/Dockerfile'
+        context: '.'
+
+# TODO: Should we enable security_scan?
+# This step performs container image security scan in Jfrog Xray via Artifactory
+# Build will fail whenever a vulnerability is found unless set to true.
+security_scan:
+  ignore_failures: true
+
+post_build:
+  dev:
+    integration_tests:
+    - steps:
+        - echo "put integration_tests here"
+  staging:
+    staging_tests:
+    - steps:
+        - echo "put staging_tests here"
+
+deploy:
+  - component: custom
+    dev:
+      - steps:
+          - echo Required for jfrog artifact promotion.
+    staging:
+      - steps:
+          - echo Required for jfrog artifact promotion.
+
+notify:
+  channel: proj-ngc
+  on_success: change
+  on_failure: always
